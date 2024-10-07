@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Login = () => {
+const Signup = () => {
   return (
     <div className='LoginPage w-full h-screen flex items-center justify-center bg-gradient-to-r from-slate-50 to-slate-400'>
       <div className='bg-white p-10 rounded-lg shadow-xl w-[400px]'>
@@ -53,4 +53,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
