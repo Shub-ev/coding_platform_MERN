@@ -5,8 +5,6 @@ const AuthContext = createContext();
 
 // create provider component
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [error, setError] = useState(null);
 
     const login = async (userData) => {
         try {
@@ -20,7 +18,10 @@ export const AuthProvider = ({ children }) => {
 
             const res = await response.json();
             if (res.success) {
-                setUser(res.user);
+                console.log(res.user);
+                localStorage.setItem("user", {
+                    "user": res.user,
+                })
             }
             return res;
         }
@@ -49,13 +50,12 @@ export const AuthProvider = ({ children }) => {
         }
         catch (error) {
             console.error(error);
-            setError(error);
             return error;
         }
     }
 
     return (
-        <AuthContext.Provider value={{ user, login, signup }}>
+        <AuthContext.Provider value={{ login, signup }}>
             {children}
         </AuthContext.Provider>
     )

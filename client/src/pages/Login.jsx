@@ -14,7 +14,6 @@ const Login = () => {
     if (res.success) {
       navigate('/');
     }
-    console.log(res);
   }
 
   return (
