@@ -9,7 +9,10 @@ const createUser = async (req, res) => {
         console.log(isPresent);
 
         if (isPresent) {
-            return res.status(400).json({ message: "Email already exists" });
+            return res.status(400).json({ 
+                success: false,
+                message: "Email already exists" 
+            });
         }
 
         // hashing the password before saving
@@ -61,6 +64,8 @@ const loginUser = async (req, res) => {
         });
     }
 }
+
+
 
 module.exports = {
     createUser,

@@ -1,8 +1,8 @@
 const express = require("express");
 const cors = require('cors');
 const dotenv = require('dotenv');
-const authRoute = require('./routes/auth.route');
 const { connectMongoose } = require('./config/db');
+const router = require("./routes");
 
 dotenv.config();
 
@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 // in express app .on is event listener as express extends EventEmitter class
-app.use('/user/coding_platform/', authRoute);
+app.use('/user/coding_platform/', router);
 
 app.listen(PORT, () => {
     console.log(`Server running at PORT ${PORT}`);
