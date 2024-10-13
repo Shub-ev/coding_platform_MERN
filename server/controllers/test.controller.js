@@ -116,7 +116,35 @@ const checkTest = async (req, res) => {
     }
 }
 
+const getTests = async (req, res) => {
+    try {
+        const tests = await TestModel.find(); // Fetch all tests
+
+        if (!tests.length) {
+            return res.status(404).json({
+                success: false,
+                message: "No tests found.",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Tests retrieved successfully.",
+            tests,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while retrieving tests.',
+            error: error.message,
+        });
+    }
+};
+
+
 module.exports = {
     createTest,
-    checkTest
+    checkTest,
+    getTests,
 }

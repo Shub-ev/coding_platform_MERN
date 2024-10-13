@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (userData) => {
         try {
-            const response = await fetch('http://localhost:8080/user/coding_platform/login', {
+            const response = await fetch('http://localhost:8080/user/coding_platform/auth/login', {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
 
     const signup = async (userData) => {
         try {
-            const response = await fetch("http://localhost:8080/user/coding_platform/createUser", {
+            const response = await fetch("http://localhost:8080/user/coding_platform/auth/createUser", {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
