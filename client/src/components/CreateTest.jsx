@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import './Component.css';
 
 const CreateTest = ({ setDisplayCreateTest }) => {
+    const [title, setTitle] = useState('');
+    const [pass, setPass] = useState("");
     const [isPrivate, setIsPrivate] = useState(false);
     const [questions, setQuestions] = useState([{ question: '', answer: '' }]);
     const formRef = useRef(null);
@@ -18,6 +20,39 @@ const CreateTest = ({ setDisplayCreateTest }) => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [setDisplayCreateTest]);
+
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+        try{
+            const testData = {
+                email: localStorage.getItem('user'),
+                testTitle: title,
+                testPass: pass,
+                testQuestions: questions,
+                private: isPrivate,
+            }
+            console.log(testData);
+            const response = await fetch("http://localhost:8080/user/coding_platform/test/createTest",{
+                method: "POST",
+                headers: {
+                    'Content-Type': "application/json",
+                },
+                body: JSON.stringify(testData),
+            })
+
+            const data = await response.json();
+            console.log(data);
+
+            setDisplayCreateTest(false);
+            if(!data.success){
+                console.error("Error while creating test!");
+            }
+        }
+        catch(error){
+            setDisplayCreateTest(false);
+            console.error(error);
+        }
+    }
 
     const handleQuestionChange = (index, field, value) => {
         const updatedQuestions = [...questions];
@@ -37,13 +72,16 @@ const CreateTest = ({ setDisplayCreateTest }) => {
     return (
         <div className="fixed inset-0 w-full h-full bg-gray-100 z-[999] bg-opacity-60 flex items-center justify-center">
             <form
+                onSubmit={handleFormSubmit}
                 ref={formRef}
-                className="w-full md:w-[60%] lg:w-[28%] border mx-4 px-4 lg:px-6 py-6 bg-white drop-shadow-lg"
+                className="w-full createTestForm max-h-[600px] md:w-[60%] lg:w-[28%] border mx-4 px-4 lg:px-6 py-6 bg-white drop-shadow-lg"
             >
                 <p className="text-center text-2xl font-semibold">NEW TEST</p>
 
                 <div className="createTestForm mt-6 flex flex-col gap-4">
                     <input
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
                         type="text"
                         placeholder="Unique Test Name"
                         className="w-full border px-4 py-2 rounded-lg"
@@ -110,6 +148,8 @@ const CreateTest = ({ setDisplayCreateTest }) => {
 
                     {isPrivate && (
                         <input
+                            value={pass}
+                            onChange={(e) => setPass(e.target.value)}
                             type="password"
                             placeholder="Test Password"
                             className="w-full border px-4 py-2 rounded-lg transition duration-500 ease-in-out"

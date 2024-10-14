@@ -34,6 +34,10 @@ const testSchema = new mongoose.Schema({
         type: [testQuestionSchema],
         required: true,
     },
+    private: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 const TestModel = mongoose.model('test', testSchema);

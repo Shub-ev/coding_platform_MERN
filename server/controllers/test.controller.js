@@ -2,7 +2,7 @@ const { TestModel, TestResultModel } = require('../models');
 const bcrypt = require('bcrypt');
 
 const createTest = async (req, res) => {
-    const { email, testTitle, testPass, testQuestions } = await req.body;
+    const { email, testTitle, testPass, testQuestions, private } = await req.body;
 
     try {
         const isPresent = await TestModel.findOne({ testTitle });
@@ -28,7 +28,8 @@ const createTest = async (req, res) => {
             testTitle,
             email,
             testPassword: hashedPassword,
-            testQuestions
+            testQuestions,
+            private
         });
 
         const test_results = new TestResultModel({
@@ -142,9 +143,52 @@ const getTests = async (req, res) => {
     }
 };
 
+const checkPassword = async (req, res) => {
+    const { testTitle, password } = req.body;
+
+    try {
+        const test = await TestModel.findOne({ testTitle });
+
+        if (!test) {
+            return res.status(404).json({
+                success: false,
+                message: 'Test not found.',
+            });
+        }
+
+        console.log(test);
+
+        const match = await bcrypt.compare(password, test.testPassword);
+        if (!match) {
+            return res.status(401).json({
+                success: false,
+                message: 'Incorrect password.',
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Password verified successfully.',
+            test: {
+                testTitle: test.testTitle,
+                isPrivate: test.private,
+                questions: test.questions,
+            },
+        });
+    } catch (error) {
+        console.error('Error checking password:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while checking the password.',
+            error: error.message,
+        });
+    }
+};
+
 
 module.exports = {
     createTest,
     checkTest,
     getTests,
+    checkPassword,
 }

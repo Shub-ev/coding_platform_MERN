@@ -1,3 +1,7 @@
+.createTestForm{
+    overflow-y: scroll;
+}
+
 .createTestForm::-webkit-scrollbar {
     display: none;
 }

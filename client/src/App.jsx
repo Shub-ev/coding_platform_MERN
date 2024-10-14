@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Home, Login, Signup } from './pages'
+import { Home, Login, Signup, TestPage } from './pages'
 import RootLayout from './root_layout/RootLayout';
 
 const App = () => {
@@ -12,6 +12,7 @@ const App = () => {
 
         <Route element={<RootLayout />}>
           <Route path="/" element={<Home />} />
+          <Route path='/testPage' element={<TestPage/>}/>
         </Route>
       </Routes>
     </Router>
