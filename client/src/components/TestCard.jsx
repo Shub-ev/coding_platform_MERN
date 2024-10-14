@@ -30,7 +30,7 @@ const TestCard = ({ title, isPrivate, img, questions }) => {
                     Take Test
                 </button>
             </div>
-            {displayPass && <CheckPassword title={title}/>}
+            {displayPass && <CheckPassword title={title} isPrivate={isPrivate} questions={questions}/>}
         </div>
     );
 };

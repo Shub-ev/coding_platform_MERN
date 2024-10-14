@@ -1,23 +1,41 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const CheckPassword = ({ title }) => {
-  const [password, setPassword] = useState('');
+const CheckPassword = ({ title, isPrivate, questions }) => {
+  const [pass, setPass] = useState('');
+  const [wrongPass, setWrongPass] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = {
 
-    }
-    try{
+    try {
+      const pack = {
+        testTitle: title,
+        password: pass,
+      }
+      console.log(pack);
+      
       const response = await fetch('http://localhost:8080/user/coding_platform/test/checkPass', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
         },
-        body: 
-      })
+        body: JSON.stringify(pack),
+      });
+
+      const data = await response.json();
+
+      console.log(data);
+      if(data.success){
+        setWrongPass(true);
+        navigate('/testPage', { state: { title, isPrivate, questions } });
+      }
+      else{
+        setWrongPass(true);
+      }
     }
-    catch(error){
+    catch (error) {
       console.error(error);
     }
   };
@@ -31,10 +49,10 @@ const CheckPassword = ({ title }) => {
         <h2 className="text-2xl font-bold mb-4 text-center">Enter Password</h2>
         <input
           type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={pass}
+          onChange={(e) => setPass(e.target.value)}
           placeholder="Password"
-          className="p-3 border rounded-md outline-none focus:border-blue-500"
+          className={`p-3 border rounded-md outline-none focus:border-blue-500 ${wrongPass ? "outline-red-500" : "outline-none"}`}
           required
         />
         <button
