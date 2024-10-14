@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/auth.context';
+import toast from 'react-hot-toast';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +13,11 @@ const Login = () => {
     event.preventDefault();
     const res = await login({ email, password });
     if (res.success) {
+      toast.success("Login Successful!");
       navigate('/');
+    }
+    else{
+      toast.error(res.message);
     }
   }
 

@@ -16,7 +16,7 @@ const TestCard = ({ title, isPrivate, img, questions }) => {
     };
 
     return (
-        <div className="card max-w-[380px] border border-gray-200 shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 hover:shadow-xl">
+        <div className="card xs:w-[440px] md:w-[280px] border border-gray-200 shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 hover:shadow-xl">
             <img src={img} alt={`${title} cover`} className="w-full h-[250px] object-cover" />
             <div className="p-4 space-y-2">
                 <h3 className="text-2xl font-bold tracking-wide truncate">{title}</h3>

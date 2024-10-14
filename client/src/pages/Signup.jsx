@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/auth.context.jsx';
+import toast from 'react-hot-toast';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -14,6 +15,7 @@ const Signup = () => {
     event.preventDefault();
 
     if (pass1 !== pass2) {
+      toast.error('Enter Same Passswords!')
       console.warn('Passwords did not match');
       return;
     }
@@ -25,7 +27,11 @@ const Signup = () => {
 
     const res = await signup(user);
     if (res.success) {
+      toast.success('User Created!')
       navigate('/');
+    }
+    else{
+      toast.error(res.message);
     }
     console.log(res);
   }

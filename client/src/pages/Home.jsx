@@ -31,7 +31,7 @@ const Home = () => {
     return (
         <div className="HomePage w-[100%] px-4 sm:px-8 lg:px-12">
             <HomeNavbar />
-            <div className="testCards xs:mb-4 md:mb-8 mt-6 grid gap-20 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-items-stretch">
+            <div className="testCards w-[100%] h-fit overflow-x-scroll xs:mb-4 md:mb-8 mt-6 xs:gap-4 flex justify-between">
                 {isLoading ? (
                     <p>Loading tests...</p>
                 ) : tests.length > 0 ? (
