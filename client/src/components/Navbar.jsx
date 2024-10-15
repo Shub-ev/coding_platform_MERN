@@ -11,6 +11,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const options = [
+    { title: "Home", onClick: () => { navigate('/') } },
     { title: "Practice", onClick: () => {} },
     { title: "Tests", onClick: () => {} },
     { title: "Create Test", onClick: () => { setDisplayCreateTest(!displayCreateTest); console.log(displayCreateTest); } },

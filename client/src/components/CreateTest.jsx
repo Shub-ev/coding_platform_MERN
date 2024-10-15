@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Component.css';
+import toast from 'react-hot-toast';
 
 const CreateTest = ({ setDisplayCreateTest }) => {
     const [title, setTitle] = useState('');
@@ -45,7 +46,7 @@ const CreateTest = ({ setDisplayCreateTest }) => {
 
             setDisplayCreateTest(false);
             if(!data.success){
-                console.error("Error while creating test!");
+                toast.error("Error while creating test!");
             }
         }
         catch(error){

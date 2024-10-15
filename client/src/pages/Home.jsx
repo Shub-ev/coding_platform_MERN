@@ -29,9 +29,9 @@ const Home = () => {
     }, []);
 
     return (
-        <div className="HomePage w-[100%] px-4 sm:px-8 lg:px-12">
+        <div className="HomePage px-4 sm:px-8 lg:px-12">
             <HomeNavbar />
-            <div className="testCards w-[100%] h-fit overflow-x-scroll xs:mb-4 md:mb-8 mt-6 xs:gap-4 flex justify-between">
+            <div className="testCards grid xs:grid-cols-1 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-5 xs:mb-4 md:mb-8 mt-6 xs:gap-4 md:gap-20 lg:gap-20">
                 {isLoading ? (
                     <p>Loading tests...</p>
                 ) : tests.length > 0 ? (
