@@ -58,20 +58,12 @@ const createTest = async (req, res) => {
 }
 
 const checkTest = async (req, res) => {
-    const { result, email, testTitle, questionIndex } = await req.body;
+    const { script, email, testTitle, questionIndex } = req.body;
 
     try {
         const index = parseInt(questionIndex);
 
         const test = await TestModel.findOne({ testTitle });
-
-        await TestResultModel.updateOne(
-            { testTitle },
-            {
-                $addToSet: { attempted: email },
-            }
-        );
-
         if (!test) {
             return res.status(400).json({
                 success: false,
@@ -79,43 +71,69 @@ const checkTest = async (req, res) => {
             });
         }
 
-        const correctAnswer = test.testQuestions[index].answer;
-        const isAnswerCorrect = result === correctAnswer;
+        const jdoodleResponse = await fetch('https://api.jdoodle.com/v1/execute', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                clientId: "668fac826c290d705dd4da9a37b58679",
+                clientSecret: "71b42e369f89cb6860a57f6f4ca6eae281d96bae389765c0354df125c3c22c51",
+                script,
+                stdin: "",
+                language: "cpp",
+                versionIndex: "3",
+                compileOnly: false,
+            })
+        });
 
-        if (isAnswerCorrect) {
-            await TestResultModel.updateOne(
-                { testTitle },
-                {
-                    $addToSet: { correctResults: email },
-                    $pull: { incorrectResult: email }
-                }
-            );
-        } 
-        else {
-            await TestResultModel.updateOne(
-                { testTitle },
-                {
-                    $addToSet: { incorrectResult: email },
-                    $pull: { correctResults: email }
-                }
-            );
+        const jdoodleData = await jdoodleResponse.json();
+        console.log(jdoodleData);
+        const { output, error } = jdoodleData;
+
+        if (error) {
+            return res.status(400).json({
+                success: false,
+                message: "Compilation Error: " + error,
+            });
         }
+
+        const correctAnswer = test.testQuestions[index].answer.trim();
+        const isAnswerCorrect = output.trim() === correctAnswer;
+
+        await TestResultModel.updateOne(
+            { testTitle },
+            {
+                $addToSet: { attempted: email },
+                ...(isAnswerCorrect
+                    ? {
+                        $addToSet: { correctResults: email },
+                        $pull: { incorrectResult: email },
+                    }
+                    : {
+                        $addToSet: { incorrectResult: email },
+                        $pull: { correctResults: email },
+                    })
+            }
+        );
 
         return res.status(200).json({
             success: isAnswerCorrect,
-            message: isAnswerCorrect ? "Answer is correct! Test marked as successful." : "Answer is incorrect! Test marked as unsuccessful."
+            message: isAnswerCorrect
+                ? "Answer is correct! Test marked as successful."
+                : "Answer is incorrect! Test marked as unsuccessful.",
         });
-    }
-    catch (error) {
-        console.error(error);
+    } catch (error) {
+        console.error('Error during test check:', error.message);
 
         return res.status(500).json({
             success: false,
             message: 'An error occurred while checking the test.',
-            error: error.message
+            error: error.message,
         });
     }
-}
+};
+
 
 const getTests = async (req, res) => {
     try {

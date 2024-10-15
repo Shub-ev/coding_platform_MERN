@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const TestPage = () => {
     const location = useLocation();
-    const { title, questions, isPrivate } = location.state || {};
-    
+    const { title, questions = [], isPrivate } = location.state || {};
+
     const [textEditor, setTextEditor] = useState('');
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState(questions.map(q => q.answer || ''));
@@ -15,6 +16,7 @@ const TestPage = () => {
 
     const handleTabClick = (index) => {
         setCurrentQuestionIndex(index);
+        setTextEditor(answers[index] || '');
     };
 
     const handleChange = (event) => {
@@ -23,10 +25,41 @@ const TestPage = () => {
         setAnswers(newAnswers);
     };
 
+    const submitAnswer = async () => {
+        const data = {
+            script: textEditor,
+            email: localStorage.getItem('user'),
+            testTitle: title,
+            questionIndex: currentQuestionIndex,
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/user/coding_platform/test/checkTest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const res = await response.json();
+
+            if (res.success) {
+                toast.success('Submission Success!');
+                console.log('Submission Successful:', res.message);
+            } else {
+                toast.error('Submission Failed!');
+                console.error('Submission Failed:', res.message);
+            }
+        } catch (error) {
+            toast.error('Submission Failed!');
+            console.error('Error during submission:', error);
+        }
+    };
+
     return (
         <div className="pt-10 bg-gray-50 flex items-center justify-center px-[3%]">
             <div className="w-[100%] h-[70vh] grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Question Navigation and Details */}
                 <div className="bg-white shadow-lg rounded-lg p-6 space-y-4">
                     <h1 className="text-4xl font-extrabold text-gray-800 mb-4">{title}</h1>
                     <div className="flex space-x-4 mb-4">
@@ -49,7 +82,7 @@ const TestPage = () => {
                             {`Question ${currentQuestionIndex + 1}:`}
                         </h2>
                         <p className="text-lg">
-                            {questions[currentQuestionIndex].question}
+                            {questions[currentQuestionIndex]?.question}
                         </p>
                     </div>
                     <p className="text-lg">
@@ -72,11 +105,17 @@ const TestPage = () => {
                     <textarea
                         rows="12"
                         value={textEditor}
-                        onChange={(e) => setTextEditor(e.target.value)}
+                        onChange={(e) => {
+                            setTextEditor(e.target.value);
+                            handleChange(e);
+                        }}
                         placeholder="Write your answers here..."
                         className="w-full p-4 border border-gray-300 rounded-md outline-none focus:border-blue-500 resize-none"
                     ></textarea>
-                    <button className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">
+                    <button
+                        onClick={submitAnswer}
+                        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                    >
                         Submit Answer
                     </button>
                 </div>
